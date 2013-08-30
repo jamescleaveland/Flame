@@ -5,15 +5,23 @@
 #include <cstdio>
 #include <cassert>
 
-inline void Log(const char* msg)
+inline void Log(const char* msg, ...)
 {
-  std::cout << msg << std::endl;
+  va_list argList;
+  va_start(argList, msg);
+  vprintf(msg, argList);
+  printf("\n");
+  va_end(argList);
 }
 
-inline void Error(const char* msg, const int code = EXIT_FAILURE)
+inline void Error(const char* msg, ...)
 {
-  Log(msg);
-  exit(code);
+  va_list argList;
+  va_start(argList, msg);
+  vprintf(msg, argList);
+  printf("\n");
+  va_end(argList);
+  exit(EXIT_FAILURE);
 }
 
 #endif

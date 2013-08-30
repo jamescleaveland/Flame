@@ -1,17 +1,19 @@
 #ifndef __IMAGE_H__
 #define __IMAGE_H__
 
-#include <cassert>
 #include "png.h"
-
-// TODO: Move this to CLANG
-#define DEBUG 1
 
 struct ColorRGB
 {
   ColorRGB(char _r, char _g, char _b) : r(_r), g(_g), b(_b) {}
   ColorRGB(char x) : r(x), g(x), b(x) {}
   char r, g, b;
+
+  static const ColorRGB& White()
+  {
+    static ColorRGB white(255);
+    return white;
+  }
 };
 
 struct ColorRGBA
@@ -33,36 +35,22 @@ class Image
     Image(int width, int height, ColorType colorType = ColorType::RGB);
     ~Image();
 
-    inline void ValidatePut(int x, int y, ColorRGB& c)
+    inline void PutPixel(int x, int y, const ColorRGB& c)
     {
-#if DEBUG
-      assert(x >= 0 && x < m_width);
-      assert(y >= 0 && y < m_height);
-      assert(m_bytesPerPixel == 3);
-#endif
-    }
+      if (x < 0 || x >= m_width || y < 0 || y >= m_height)
+        return;
 
-    inline void ValidatePut(int x, int y, ColorRGBA& c)
-    {
-#if DEBUG
-      assert(x >= 0 && x < m_width);
-      assert(y >= 0 && y < m_height);
-      assert(m_bytesPerPixel == 4);
-#endif
-    }
-
-    inline void PutPixel(int x, int y, ColorRGB& c)
-    {
-      ValidatePut(x, y, c);
       png_byte* pixelBytes = &m_rowPointers[y][x * m_bytesPerPixel];
       pixelBytes[0] = c.r;
       pixelBytes[1] = c.g;
       pixelBytes[2] = c.b;
     }
 
-    inline void PutPixel(int x, int y, ColorRGBA& c)
+    inline void PutPixel(int x, int y, const ColorRGBA& c)
     {
-      ValidatePut(x, y, c);
+      if (x < 0 || x >= m_width || y < 0 || y >= m_height)
+        return;
+
       png_byte* pixelBytes = &m_rowPointers[y][x * m_bytesPerPixel];
       pixelBytes[0] = c.r;
       pixelBytes[1] = c.g;
