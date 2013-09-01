@@ -34,57 +34,6 @@ void ImageGen::ColorizePlot()
 }
 
 //-----------------------------------------------------------
-void ImageGen::SierpinskisGasket(int count) const
-{
-  ColorRGB white(255);
-  std::default_random_engine generator;
-  std::uniform_int_distribution<int> dist(0, 2);
-
-  std::uniform_int_distribution<int> plane(0, m_width);
-  float x = static_cast<float>(plane(generator));
-  float y = static_cast<float>(plane(generator));
-
-  for (auto j = 0; j < count; ++j)
-  {
-    int i = dist(generator);
-
-    if (i == 0)
-    {
-      x = x / 2.0f;
-      y = y / 2.0f;
-    }
-    else if (i == 1)
-    {
-      x = (x + m_width) / 2.0f;
-      y = y / 2.0f;
-    }
-    else if (i == 2)
-    {
-      x = x / 2.0f;
-      y = (y + m_width) / 2.0f;
-    }
-
-    m_image.PutPixel(static_cast<int>(x), static_cast<int>(y), white);
-  }
-}
-
-//-----------------------------------------------------------
-void ImageGen::Sine(double& outX, double& outY) const
-{
-  outX = sin(outX);
-  outY = sin(outY);
-}
-
-//-----------------------------------------------------------
-void ImageGen::Spherical(double& outX, double& outY) const
-{
-  double r = sqrt(outX * outX + outY * outY);
-  double oneOverR2 = 1.0 / (r * r);
-  outX = oneOverR2 * outX;
-  outY = oneOverR2 * outY;
-}
-
-//-----------------------------------------------------------
 void ImageGen::Synthesize()
 {
   double x = BiunitDouble();

@@ -15,10 +15,6 @@ class ImageGen
 
     void ColorizePlot();
 
-    void SierpinskisGasket(int count) const;
-    void Sine(double& outX, double& outY) const;
-    void Spherical(double& outX, double& outY) const;
-
     void AddAffineTransform(const Transform* t) { m_affineTransforms.push_back(t); }
     void AddNonLinearTransform(const Transform* t) { m_nonLinearTransforms.push_back(t); }
     inline void SetPostTransform(const double x, const double y) {m_postX=x; m_postY=y;}
