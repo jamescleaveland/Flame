@@ -1,22 +1,29 @@
 #include "Util.h"
 #include "ImageGen.h"
+#include "ImageGenConfigurator.h"
 #include "Image.h"
 
 int main(int argc, char* argv[])
 {
-  float quality = 1.0f;
-  if (argc == 2)
+  if (argc != 5)
   {
-    quality = atof(argv[1]);
+    Error("Incorrect parameters. Usage: Flame <quality (1.0)> <config>");
   }
 
-  Image image(512, 512);
+  float quality = atof(argv[1]);
+  char* commands = argv[2];
+  double postX = atof(argv[3]);
+  double postY = atof(argv[4]);
 
+  Image image(512, 512);
   ImageGen gen(image, quality);
+  Transforms::Ptr transforms = Transforms::Get();
+  ImageGenConfigurator::Configure(commands, postX, postY, transforms, gen);
+  
   Log("Performing %d iterations", gen.GetQuality());
-  gen.Transform();
+  gen.Synthesize();
   gen.ColorizePlot();
 
   image.Save("test.png");
-  std::cout << "Done" << std::endl;
+  Log("Done");
 }
