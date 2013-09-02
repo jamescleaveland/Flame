@@ -74,11 +74,23 @@ void ImageGen<ImgT, ColorT>::ColorizePlot()
   tm.AddTone(1.0f, ColorT(1.0f, 1.0f, 0.5f));*/
   
   // Jayleigh's Palette
+  //tm.AddTone(0.0f, ColorT(0.0f));
+  //tm.AddTone(0.05f, ColorT(0.0f, 0.1f, 0.2f));
+  //tm.AddTone(0.3f, ColorT(0.0f, 0.35f, 0.6f));
+  //tm.AddTone(0.5f, ColorT(0.2f, 0.7f, 0.0f));
+  //tm.AddTone(1.0f, ColorT(1.0f, 1.0f, 0.0f));
+  
+  // Fuji
   tm.AddTone(0.0f, ColorT(0.0f));
-  tm.AddTone(0.05f, ColorT(0.0f, 0.1f, 0.2f));
-  tm.AddTone(0.3f, ColorT(0.0f, 0.35f, 0.6f));
-  tm.AddTone(0.5f, ColorT(0.2f, 0.7f, 0.0f));
-  tm.AddTone(1.0f, ColorT(1.0f, 1.0f, 0.0f));
+  tm.AddTone(0.05f, ColorT(0.05f, 0.015f, 0.2f));
+  tm.AddTone(0.3f, ColorT(0.3, 0.2f, 0.5f));
+  tm.AddTone(0.5f, ColorT(0.7, 0.3f, 0.4f));
+  tm.AddTone(1.0f, ColorT(1.0f, 0.8f, 1.0f));
+  
+  // Calibration
+  //tm.AddTone(0.0f, ColorT(1.0f, 0.0f, 0.0f));
+  //tm.AddTone(0.5f, ColorT(0.0f, 1.0f, 0.0f));
+  //tm.AddTone(1.0f, ColorT(0.0f, 0.0f, 1.0f));
 
   const int maxPlots = m_plot.GetMax();
 
@@ -91,7 +103,7 @@ void ImageGen<ImgT, ColorT>::ColorizePlot()
       {
         float val = static_cast<float>(row[x]) / maxPlots;
         val = 1.0f - val;
-        val = 1.0f - pow(val, 200);
+        val = 1.0f - pow(val, 600);
         val = val < 0.0f ? 0.0f : (val > 1.0f ? 1.0f : val);
         m_image.PutPixel(x, y, tm.GetTone(val));
       }
