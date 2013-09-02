@@ -7,5 +7,5 @@ all:
 
 run:
 	$(CC) $(SOURCES) $(CFLAGS)
-	bin/Flame 1024 1024 2.0 "a1 a2 a3 | sine spherical swirl" 0 0
+	bin/Flame 1024 1024 1.0 "half a2 a3 | spherical swirl" 0 0
 	open test.png

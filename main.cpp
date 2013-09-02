@@ -18,7 +18,6 @@ int main(int argc, char* argv[])
   double postY = atof(argv[6]);
 
   Png<ColorRGBf> png(width, height);
-  //TODO: Make this take an abstract base Image type rather than T
   ImageGen<Png<ColorRGBf>, ColorRGBf> gen(png, quality);
   Transforms::Ptr transforms = Transforms::Get();
   ImageGenConfigurator<Png<ColorRGBf>, ColorRGBf>::Configure(commands, postX, postY, transforms, gen);

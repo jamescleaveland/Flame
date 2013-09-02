@@ -8,9 +8,15 @@ namespace Transforms
   { code }
 
   //-----------------------------------------------------------
-  T(a1,
+  T(half,
     x = x / 2.0;
     y = y / 2.0;
+  );
+
+  //-----------------------------------------------------------
+  T(dbl,
+    x *= 2.0;
+    y *= 2.0;
   );
 
   //-----------------------------------------------------------
@@ -32,6 +38,18 @@ namespace Transforms
   );
 
   //-----------------------------------------------------------
+  T(cosine,
+    x = cos(x);
+    y = cos(y);
+  );
+
+  //-----------------------------------------------------------
+  T(tangent,
+    x = tan(x);
+    y = tan(y);
+  );
+
+  //-----------------------------------------------------------
   T(spherical,
     double r2 = x * x + y * y;
     double oneOverR2 = 1.0 / r2;
@@ -47,6 +65,13 @@ namespace Transforms
   );
 
   //-----------------------------------------------------------
+  T(horseshoe,
+    double oneOverR = 1.0 / sqrt(x * x + y * y);
+    x = oneOverR * ((x - y) * (x + y));
+    y = oneOverR * (2 * x * y);
+  );
+
+  //-----------------------------------------------------------
 #undef T
 #define T(collection, name) \
   collection.emplace(#name, std::bind(name, std::placeholders::_1, std::placeholders::_2));
@@ -57,12 +82,16 @@ namespace Transforms
     Ptr transforms = std::make_shared<Collection>();
     auto& t = *transforms;
 
-    T(t, a1);
+    T(t, half);
+    T(t, dbl);
     T(t, a2);
     T(t, a3);
     T(t, sine);
+    T(t, cosine);
+    T(t, tangent);
     T(t, spherical);
     T(t, swirl);
+    T(t, horseshoe);
 
     return transforms;
   }

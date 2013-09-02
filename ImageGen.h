@@ -65,10 +65,20 @@ template<typename ImgT, typename ColorT>
 void ImageGen<ImgT, ColorT>::ColorizePlot()
 {
   ToneMap<ColorT> tm;
-  tm.AddTone(0.0f, ColorT(0.0f, 0.0f, 0.3f));
-  tm.AddTone(0.01f, ColorT(0.5f, 0.3f, 0.8f));
-  tm.AddTone(0.5f, ColorT(1.0f, 0.5f, 0.8f));
-  tm.AddTone(1.0f, ColorT(1.0f));
+
+  // Fire
+  /*tm.AddTone(0.0f, ColorT(0.0f));
+  tm.AddTone(0.075f, ColorT(0.1f, 0.0f, 0.2f));
+  tm.AddTone(0.15f, ColorT(0.65f, 0.2f, 0.25f));
+  tm.AddTone(0.4f, ColorT(0.8f, 0.5f, 0.0f));
+  tm.AddTone(1.0f, ColorT(1.0f, 1.0f, 0.5f));*/
+  
+  // Jayleigh's Palette
+  tm.AddTone(0.0f, ColorT(0.0f));
+  tm.AddTone(0.05f, ColorT(0.0f, 0.1f, 0.2f));
+  tm.AddTone(0.3f, ColorT(0.0f, 0.35f, 0.6f));
+  tm.AddTone(0.5f, ColorT(0.2f, 0.7f, 0.0f));
+  tm.AddTone(1.0f, ColorT(1.0f, 1.0f, 0.0f));
 
   const int maxPlots = m_plot.GetMax();
 
@@ -79,7 +89,10 @@ void ImageGen<ImgT, ColorT>::ColorizePlot()
     {
       if (row[x] != 0)
       {
-        const float val = static_cast<float>(row[x]) / maxPlots;
+        float val = static_cast<float>(row[x]) / maxPlots;
+        val = 1.0f - val;
+        val = 1.0f - pow(val, 200);
+        val = val < 0.0f ? 0.0f : (val > 1.0f ? 1.0f : val);
         m_image.PutPixel(x, y, tm.GetTone(val));
       }
     }
