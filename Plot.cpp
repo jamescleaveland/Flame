@@ -23,11 +23,17 @@ Plot::~Plot()
 //-----------------------------------------------------------
 void Plot::Record(const double& x, const double& y)
 {
+  int newVal;
   int i_x = static_cast<int>((x * 0.5 + 0.5) * (m_width - 1));
   int i_y = static_cast<int>((y * 0.5 + 0.5) * (m_height - 1));
   if (i_x >= 0 && i_x < m_width && i_y >= 0 && i_y < m_height)
   {
-    ++m_data[i_y * m_width + i_x];
+    newVal = ++m_data[i_y * m_width + i_x];
+  }
+
+  if (newVal > m_max)
+  {
+    m_max = newVal;
   }
 }
 

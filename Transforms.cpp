@@ -33,10 +33,17 @@ namespace Transforms
 
   //-----------------------------------------------------------
   T(spherical,
-    double r = sqrt(x * x + y * y);
-    double oneOverR2 = 1.0 / (r * r);
+    double r2 = x * x + y * y;
+    double oneOverR2 = 1.0 / r2;
     x = oneOverR2 * x;
     y = oneOverR2 * y;
+  );
+
+  //-----------------------------------------------------------
+  T(swirl,
+    double r2 = x * x + y * y;
+    x = x * sin(r2) - y * cos(r2);
+    y = x * cos(r2) + y * sin(r2);
   );
 
   //-----------------------------------------------------------
@@ -55,6 +62,7 @@ namespace Transforms
     T(t, a3);
     T(t, sine);
     T(t, spherical);
+    T(t, swirl);
 
     return transforms;
   }

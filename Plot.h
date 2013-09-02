@@ -11,11 +11,13 @@ class Plot
 
     void Record(const double& x, const double& y);
     const Data* GetRow(int rowIndex) const;
+    inline int GetMax() const {return m_max;}
 
   private:
     const int m_width;
     const int m_height;
     Data* m_data;
+    int m_max;
 };
 
 #endif
