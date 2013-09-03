@@ -1,6 +1,7 @@
 #ifndef __VECTORTYPES_H__
 #define __VECTORTYPES_H__
 
+//-----------------------------------------------------------
 template<typename T>
 struct Vec3_tpl
 {
@@ -50,6 +51,14 @@ struct Vec3 : public Vec3_tpl<float>
   inline Vec3 operator+(Vec3 other)
   {
     return Vec3(x + other.x, y + other.y, z + other.z);
+  }
+
+  inline Vec3& operator+=(const Vec3& other)
+  {
+    x += other.x;
+    y += other.y;
+    z += other.z;
+    return *this;
   }
 };
 

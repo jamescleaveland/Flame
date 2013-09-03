@@ -4,13 +4,24 @@
 class Plot
 {
   public:
-    typedef unsigned short Data;
+    struct Data
+    {
+      Data()
+        : hits(0)
+        , weight(0.0f)
+      {}
+
+      unsigned int hits;
+      float weight;
+    };
 
     Plot(int width, int height);
     ~Plot();
 
     void Record(const double& x, const double& y);
+    void ComputeWeights();
     const Data* GetRow(int rowIndex) const;
+    const Data* GetAt(int x, int y) const;
     inline int GetMax() const {return m_max;}
 
   private:
