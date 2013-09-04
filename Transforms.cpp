@@ -30,7 +30,7 @@ namespace Transforms
 
   //-----------------------------------------------------------
 #define T(name, code) \
-  void name(double& x, double& y) \
+  inline void name(double& x, double& y) \
   { code }
 
   //-----------------------------------------------------------

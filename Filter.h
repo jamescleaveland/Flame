@@ -147,7 +147,7 @@ void Filter<T>::Bilinear()
       T* up = m_clone->GetPixelAt(x, u_y);
       T* down = m_clone->GetPixelAt(x, d_y);
       T* center = m_clone->GetPixelAt(x, y);
-      const float cw = Lerp(0.2f, 1.0f, weight);
+      const float cw = Lerp(0.2f, 0.8f, weight);
       const float remainder = 1.0f - cw;
       const float qw = remainder * 0.25f;
       m_image.PutPixel(x, y, *center*cw + *left*qw + *right*qw + *up*qw + *down*qw);

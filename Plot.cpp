@@ -1,4 +1,5 @@
 #include "Plot.h"
+#include "Util.h"
 #include <math.h>
 #include <cassert>
 
@@ -18,28 +19,23 @@ Plot::~Plot()
 }
 
 //-----------------------------------------------------------
-void Plot::Record(const double& x, const double& y)
+void Plot::PostProcess()
 {
-  int newVal;
-  int i_x = static_cast<int>((x * 0.5 + 0.5) * (m_width - 1));
-  int i_y = static_cast<int>((y * 0.5 + 0.5) * (m_height - 1));
-  if (i_x >= 0 && i_x < m_width && i_y >= 0 && i_y < m_height)
-  {
-    newVal = ++m_data[i_y * m_width + i_x].hits;
-  }
-
-  if (newVal > m_max)
-  {
-    m_max = newVal;
-  }
-}
-
-//-----------------------------------------------------------
-void Plot::ComputeWeights()
-{
+  // Compute max
+  m_max = 0;
   for (auto i = 0; i < m_width * m_height; ++i)
   {
-    float weight = static_cast<float>(m_data[i].hits) / m_max;
+    unsigned int hits = m_data[i].hits.load();
+    if (hits > m_max)
+    {
+      m_max = hits;
+    }
+  }
+
+  // Compute plot hit weights as a ratio of max
+  for (auto i = 0; i < m_width * m_height; ++i)
+  {
+    float weight = static_cast<float>(m_data[i].hits.load()) / m_max;
     weight = 1.0f - weight;
     weight = 1.0f - pow(weight, 1400);
     weight = weight < 0.0f ? 0.0f : (weight > 1.0f ? 1.0f : weight);
