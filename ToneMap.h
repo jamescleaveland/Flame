@@ -60,7 +60,6 @@ T ToneMap<T>::GetTone(float t)
   }
 
   assert(min != fMax && max != fMin);
-  //Log("min: %2.2f max: %2.2f t: %2.2f", min, max, t);
 
   if (fabs(max - min) < fMin)
   {
