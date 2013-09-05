@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
   writer.Write();
 
   Log("Saving...");
-  png.Save("test.png");
+  png.Save("output.png");
 
   Log("Done");
 }
