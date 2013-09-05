@@ -39,6 +39,8 @@ void Plot::PostProcess()
     weight = 1.0f - weight;
     weight = 1.0f - pow(weight, 1400);
     weight = weight < 0.0f ? 0.0f : (weight > 1.0f ? 1.0f : weight);
+    weight = pow(weight, 1.0 / 3.0);
+    //Log("%f", weight);
     m_data[i].weight = weight;
   }
 }

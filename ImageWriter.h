@@ -41,10 +41,7 @@ void ImageWriter<T>::Write()
     const Plot::Data* row = m_plot.GetRow(y);
     for (auto x = 0; x < width; ++x)
     {
-      if (row[x].hits != 0)
-      {
-        m_image.PutPixel(x, y, m_toneMap.GetTone(row[x].weight));
-      }
+      m_image.PutPixel(x, y, m_toneMap.GetTone(row[x].weight));
     }
   }
 

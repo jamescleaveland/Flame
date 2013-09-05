@@ -56,16 +56,21 @@ int main(int argc, char* argv[])
 
   // Fuji
   tm.AddTone(0.0f, ColorRGBf(0.0f));
-  tm.AddTone(0.1f, ColorRGBf(0.05f, 0.015f, 0.4f));
-  tm.AddTone(0.2f, ColorRGBf(0.25, 0.2f, 0.6f));
-  tm.AddTone(0.3f, ColorRGBf(0.6, 0.3f, 0.5f));
-  tm.AddTone(0.5f, ColorRGBf(0.8f, 0.35f, 0.5f));
-  tm.AddTone(0.7f, ColorRGBf(0.95f, 0.7f, 0.8f));
+  tm.AddTone(0.3f, ColorRGBf(0.05f, 0.1f, 0.125f));
+  tm.AddTone(0.4f, ColorRGBf(0.1f, 0.05f, 0.35f));
+  tm.AddTone(0.6f, ColorRGBf(0.4f, 0.1f, 0.6f));
+  tm.AddTone(0.8f, ColorRGBf(0.8f, 0.35f, 0.5f));
   tm.AddTone(1.0f, ColorRGBf(1.0f, 0.8f, 1.0f));
   
   // Calibration
+  //tm.AddTone(0.0f, ColorRGBf(0.0f, 0.0f, 0.0f));
+  //tm.AddTone(0.5f, ColorRGBf(1.0f, 0.0f, 0.0f));
+  //tm.AddTone(1.0f, ColorRGBf(1.0f, 1.0f, 1.0f));
+
   //tm.AddTone(0.0f, ColorRGBf(1.0f, 0.0f, 0.0f));
+  //tm.AddTone(0.25f, ColorRGBf(1.0f, 0.0f, 1.0f));
   //tm.AddTone(0.5f, ColorRGBf(0.0f, 1.0f, 0.0f));
+  //tm.AddTone(0.75f, ColorRGBf(1.0f, 0.0f, 1.0f));
   //tm.AddTone(1.0f, ColorRGBf(0.0f, 0.0f, 1.0f));
 
   Png<ColorRGBf> png(width, height);
