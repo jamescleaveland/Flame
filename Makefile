@@ -1,6 +1,6 @@
 CC=c++
 CFLAGS=-stdlib=libc++ -std=c++11 -emit-llvm -o bin/Flame -L/usr/local/lib -lpng16
-SOURCES=main.cpp Image.cpp ImageGen.cpp Plot.cpp ImageGenConfigurator.cpp Transforms.cpp
+SOURCES=$(wildcard src/*.cpp)
 
 all:
 	$(CC) $(SOURCES) $(CFLAGS)
