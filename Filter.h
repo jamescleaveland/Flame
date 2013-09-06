@@ -14,6 +14,7 @@ class Filter
     void Horizontal(int kernelWidth);
     void Cross(int kernelSize);
     void Bilinear();
+    void WeightedAverage();
 
   protected:
     int Lerp(int start, int end, float t) const;
@@ -151,6 +152,54 @@ void Filter<T>::Bilinear()
       const float remainder = 1.0f - cw;
       const float qw = remainder * 0.25f;
       m_image.PutPixel(x, y, *center*cw + *left*qw + *right*qw + *up*qw + *down*qw);
+    }
+  }
+}
+
+//-----------------------------------------------------------
+template<typename T>
+void Filter<T>::WeightedAverage()
+{
+  const int width = m_image.GetWidth();
+  const int height = m_image.GetHeight();
+
+  for (auto y = 0; y < height; ++y)
+  {
+    for (auto x = 0; x < width; ++x)
+    {
+      const float weight = m_plot.GetAt(x, y)->weight;
+      const float invWeight = 1.0f - weight;
+      const int l_x = Bound(x - 1, width);
+      const int r_x = Bound(x + 1, width);
+      const int u_y = Bound(y + 1, height);
+      const int d_y = Bound(y - 1, height);
+
+      T* left = m_clone->GetPixelAt(l_x, y);
+      T* right = m_clone->GetPixelAt(r_x, y);
+      T* up = m_clone->GetPixelAt(x, u_y);
+      T* down = m_clone->GetPixelAt(x, d_y);
+      T* center = m_clone->GetPixelAt(x, y);
+
+      float lw = m_plot.GetAt(x, y)->weight;
+      float rw = m_plot.GetAt(x, y)->weight;
+      float uw = m_plot.GetAt(x, y)->weight;
+      float dw = m_plot.GetAt(x, y)->weight;
+      float cw = m_plot.GetAt(x, y)->weight;
+
+      float sum = std::numeric_limits<float>::epsilon();
+      sum += lw;
+      sum += rw;
+      sum += uw;
+      sum += dw;
+      sum += cw;
+      sum = 1.0f / sum;
+      lw *= sum;
+      rw *= sum;
+      uw *= sum;
+      dw *= sum;
+      cw *= sum;
+
+      m_image.PutPixel(x, y, *center*cw + *left*lw + *right*rw + *up*uw + *down*dw);
     }
   }
 }

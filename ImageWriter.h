@@ -47,6 +47,7 @@ void ImageWriter<T>::Write()
 
   // Filter result
   Filter<T> filter(m_image, m_plot);
+  //filter.WeightedAverage();
   filter.Bilinear();
 }
 

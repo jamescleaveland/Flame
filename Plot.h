@@ -3,6 +3,7 @@
 
 #include <atomic>
 
+// Lock-free HDR plot for multi-threaded image synthesis
 class Plot
 {
   public:
