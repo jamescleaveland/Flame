@@ -12,7 +12,7 @@ class ToneMap
 {
   public:
     void AddTone(float t, T tone);
-    T GetTone(float t);
+    T GetTone(float t) const;
 
   private:
     std::map<float, T> m_tones;
@@ -27,7 +27,7 @@ void ToneMap<T>::AddTone(float t, T tone)
 
 //-----------------------------------------------------------
 template<typename T>
-T ToneMap<T>::GetTone(float t)
+T ToneMap<T>::GetTone(float t) const
 {
   assert(t >= 0.0f && t <= 1.0f);
 

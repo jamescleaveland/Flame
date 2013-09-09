@@ -32,15 +32,16 @@ void Plot::PostProcess()
     }
   }
 
+  const float max = m_max + std::numeric_limits<float>::epsilon();
+
   // Compute plot hit weights as a ratio of max
   for (auto i = 0; i < m_width * m_height; ++i)
   {
-    float weight = static_cast<float>(m_data[i].hits.load()) / m_max;
+    float weight = static_cast<float>(m_data[i].hits.load()) / max;
     weight = 1.0f - weight;
     weight = 1.0f - pow(weight, 1400);
     weight = weight < 0.0f ? 0.0f : (weight > 1.0f ? 1.0f : weight);
     weight = pow(weight, 1.0 / 3.0);
-    //Log("%f", weight);
     m_data[i].weight = weight;
   }
 }

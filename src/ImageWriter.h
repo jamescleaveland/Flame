@@ -32,23 +32,8 @@ ImageWriter<T>::ImageWriter(Image<T>& image, const Plot& plot, ToneMap<T>& toneM
 template<typename T>
 void ImageWriter<T>::Write()
 {
-  const int width = m_image.GetWidth();
-  const int height = m_image.GetHeight();
-
-  // Convert plot to tone-mapped image
-  for (auto y = 0; y < height; ++y)
-  {
-    const Plot::Data* row = m_plot.GetRow(y);
-    for (auto x = 0; x < width; ++x)
-    {
-      m_image.PutPixel(x, y, m_toneMap.GetTone(row[x].weight));
-    }
-  }
-
-  // Filter result
-  Filter<T> filter(m_image, m_plot);
-  //filter.WeightedAverage();
-  filter.Bilinear();
+  Filter<T> filter(m_image, m_plot, m_toneMap);
+  filter.Box();
 }
 
 #endif

@@ -24,23 +24,6 @@ void Png<ColorRGBf>::PutPixel(int x, int y, const ColorRGBAf& c)
 
 //-----------------------------------------------------------
 template<>
-Image<ColorRGBf>* Png<ColorRGBf>::Clone() const
-{
-  Png<ColorRGBf>* clone = new Png<ColorRGBf>(m_width, m_height);
-
-  for (auto y = 0; y < m_height; ++y)
-  {
-    for (auto x = 0; x < m_width; ++x)
-    {
-      clone->m_rawPixels[y][x] = m_rawPixels[y][x];
-    }
-  }
-
-  return clone;
-}
-
-//-----------------------------------------------------------
-template<>
 bool Png<ColorRGBf>::Save(const char* path)
 {
   // New up some png buffers to quantize into

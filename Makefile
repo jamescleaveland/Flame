@@ -7,5 +7,5 @@ all:
 
 run:
 	$(CC) $(SOURCES) $(CFLAGS)
-	bin/Flame 1440 900 10 "dbl half a2 | handkerchief spherical swirl tangent half" -.4 0 30
+	bin/Flame 1440 900 10 "dbl serp1 serp2 | handkerchief spherical swirl tangent half" -.4 0 30
 	open output.png

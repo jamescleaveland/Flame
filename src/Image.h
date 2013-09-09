@@ -13,10 +13,9 @@ class Image
     Image(int width, int height);
     virtual ~Image();
 
-    //TODO: Move these to pure templates, and not pure virtual
+    //TODO: Make these templated methods, not pure virtual
     virtual void PutPixel(int x, int y, const ColorRGBf& c) = 0;
     virtual void PutPixel(int x, int y, const ColorRGBAf& c) = 0;
-    virtual Image<T>* Clone() const = 0;
     virtual bool Save(const char* path) = 0;
 
     T* GetPixelRow(int index);
@@ -83,7 +82,6 @@ class Png : public Image<T>
 
     void PutPixel(int x, int y, const ColorRGBf& c) override;
     void PutPixel(int x, int y, const ColorRGBAf& c) override;
-    Image<T>* Clone() const override;
     bool Save(const char* path) override;
 
   protected:

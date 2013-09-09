@@ -33,6 +33,8 @@ class Plot
     }
 
     void PostProcess();
+    inline int GetWidth() const { return m_width; }
+    inline int GetHeight() const { return m_height; }
     const Data* GetRow(int rowIndex) const;
     const Data* GetAt(int x, int y) const;
     inline int GetMax() const {return m_max;}

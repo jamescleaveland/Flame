@@ -3,18 +3,15 @@
 
 #include "Image.h"
 #include "Plot.h"
+#include <cmath>
 
 template<typename T>
 class Filter
 {
   public:
-    Filter(Image<T>& image, const Plot& plot);
-    ~Filter();
+    Filter(Image<T>& image, const Plot& plot, const ToneMap<T>& toneMap);
 
-    void Horizontal(int kernelWidth);
-    void Cross(int kernelSize);
-    void Bilinear();
-    void WeightedAverage();
+    void Box();
 
   protected:
     int Lerp(int start, int end, float t) const;
@@ -23,183 +20,58 @@ class Filter
 
   private:
     Image<T>& m_image;
-    Image<T>* m_clone;
     const Plot& m_plot;
+    const ToneMap<T>& m_toneMap;
 };
 
 //-----------------------------------------------------------
 template<typename T>
-Filter<T>::Filter(Image<T>& image, const Plot& plot)
+Filter<T>::Filter(Image<T>& image, const Plot& plot, const ToneMap<T>& toneMap)
   : m_image(image)
   , m_plot(plot)
+  , m_toneMap(toneMap)
 {
-  m_clone = m_image.Clone();
+  assert(m_image.GetWidth() * 2 == m_plot.GetWidth());
+  assert(m_image.GetHeight() * 2 == m_plot.GetHeight());
 }
 
 //-----------------------------------------------------------
 template<typename T>
-Filter<T>::~Filter()
+void Filter<T>::Box()
 {
-  delete m_clone;
-  m_clone = nullptr;
-}
+  const int imgWidth = m_image.GetWidth();
+  const int imgHeight = m_image.GetHeight();
+  const int plotWidth = m_plot.GetWidth();
+  const int plotHeight = m_plot.GetHeight();
+  const float e = std::numeric_limits<float>::epsilon();
 
-//-----------------------------------------------------------
-template<typename T>
-void Filter<T>::Horizontal(int kernelWidth)
-{
-  const int width = m_image.GetWidth();
-  const int height = m_image.GetHeight();
-
-  for (auto y = 0; y < height; ++y)
+  for (auto y = 0; y < imgHeight; ++y)
   {
-    T* pixelRow = m_clone->GetPixelRow(y);
-    const Plot::Data* plotRow = m_plot.GetRow(y);
-
-    for (auto x = 0; x < width; ++x)
+    for (auto x = 0; x < imgWidth; ++x)
     {
-      const float plotWeight = plotRow[x].weight;
+      const auto xx = x * 2;
+      const auto yy = y * 2;
 
-      // Let the kernel width be a function of plot weight
-      const int k = Lerp(kernelWidth, 1, plotWeight);
-      assert(k != 0);
+      const int l_x = Bound(xx - 1, plotWidth);
+      const int r_x = Bound(xx + 1, plotWidth);
+      const int u_y = Bound(yy + 1, plotHeight);
+      const int d_y = Bound(yy - 1, plotHeight);
 
-      const float sampleWeight = 1.0f / k;
-      T filteredPixel;
+      const float center = m_plot.GetAt(xx, yy)->weight;
+      const float left = m_plot.GetAt(l_x, yy)->weight;
+      const float right = m_plot.GetAt(r_x, yy)->weight;
+      const float up = m_plot.GetAt(xx, u_y)->weight;
+      const float down = m_plot.GetAt(xx, d_y)->weight;
+      const float lu = m_plot.GetAt(l_x, u_y)->weight;
+      const float ru = m_plot.GetAt(r_x, u_y)->weight;
+      const float ld = m_plot.GetAt(l_x, d_y)->weight;
+      const float rd = m_plot.GetAt(r_x, d_y)->weight;
 
-      for (auto i = 0; i < k; ++i)
-      {
-        const int offset = i - (k / 2);
-        int cx = x + offset;
-        cx = cx < 0 ? 0 : (cx >= width ? width - 1 : cx);
-        filteredPixel += pixelRow[cx] * sampleWeight;
-      }
+      const float coef = 0.111111f;
+      float final = (center + left + right + up + down + lu + ru + ld + rd + e) * coef;
+      final = std::max(std::min(final, 1.0f), 0.0f);
 
-      filteredPixel = filteredPixel * (1.0f - plotWeight) + pixelRow[x] * plotWeight;
-      m_image.PutPixel(x, y, filteredPixel);
-    }
-  }
-}
-
-//-----------------------------------------------------------
-template<typename T>
-void Filter<T>::Cross(int kernelSize)
-{
-  const int width = m_image.GetWidth();
-  const int height = m_image.GetHeight();
-
-  for (auto y = 0; y < height; ++y)
-  {
-    for (auto x = 0; x < width; ++x)
-    {
-      const float plotWeight = m_plot.GetAt(x, y)->weight;
-
-      // Let the kernel size be a function of plot weight
-      const int k = Lerp(kernelSize, 1, plotWeight);
-      assert(k != 0);
-
-      // Sample weight is divided in half to compensate for cross
-      const float sampleWeight = 1.0f / k * 0.5f;
-      T filteredPixel;
-
-      // Horizontal pass of cross
-      for (auto i = 0; i < k; ++i)
-      {
-        const int offset = i - (k / 2);
-        int cx = x + offset;
-        cx = cx < 0 ? 0 : (cx >= width ? width - 1 : cx);
-        filteredPixel += *m_clone->GetPixelAt(cx, y) * sampleWeight;
-      }
-
-      // Vertical pass of cross
-      for (auto i = 0; i < k; ++i)
-      {
-        const int offset = i - (k / 2);
-        int cy = y + offset;
-        cy = cy < 0 ? 0 : (cy >= height ? height - 1 : cy);
-        filteredPixel += *m_clone->GetPixelAt(x, cy) * sampleWeight;
-      }
-
-      filteredPixel = filteredPixel * (1.0f - plotWeight) + *m_clone->GetPixelAt(x, y) * plotWeight;
-      m_image.PutPixel(x, y, filteredPixel);
-    }
-  }
-}
-
-//-----------------------------------------------------------
-template<typename T>
-void Filter<T>::Bilinear()
-{
-  const int width = m_image.GetWidth();
-  const int height = m_image.GetHeight();
-
-  for (auto y = 0; y < height; ++y)
-  {
-    for (auto x = 0; x < width; ++x)
-    {
-      const float weight = m_plot.GetAt(x, y)->weight;
-      const float invWeight = 1.0f - weight;
-      const int l_x = Bound(x - 1, width);
-      const int r_x = Bound(x + 1, width);
-      const int u_y = Bound(y + 1, height);
-      const int d_y = Bound(y - 1, height);
-      T* left = m_clone->GetPixelAt(l_x, y);
-      T* right = m_clone->GetPixelAt(r_x, y);
-      T* up = m_clone->GetPixelAt(x, u_y);
-      T* down = m_clone->GetPixelAt(x, d_y);
-      T* center = m_clone->GetPixelAt(x, y);
-      const float cw = Lerp(0.2f, 0.8f, weight);
-      const float remainder = 1.0f - cw;
-      const float qw = remainder * 0.25f;
-      m_image.PutPixel(x, y, *center*cw + *left*qw + *right*qw + *up*qw + *down*qw);
-    }
-  }
-}
-
-//-----------------------------------------------------------
-template<typename T>
-void Filter<T>::WeightedAverage()
-{
-  const int width = m_image.GetWidth();
-  const int height = m_image.GetHeight();
-
-  for (auto y = 0; y < height; ++y)
-  {
-    for (auto x = 0; x < width; ++x)
-    {
-      const float weight = m_plot.GetAt(x, y)->weight;
-      const float invWeight = 1.0f - weight;
-      const int l_x = Bound(x - 1, width);
-      const int r_x = Bound(x + 1, width);
-      const int u_y = Bound(y + 1, height);
-      const int d_y = Bound(y - 1, height);
-
-      T* left = m_clone->GetPixelAt(l_x, y);
-      T* right = m_clone->GetPixelAt(r_x, y);
-      T* up = m_clone->GetPixelAt(x, u_y);
-      T* down = m_clone->GetPixelAt(x, d_y);
-      T* center = m_clone->GetPixelAt(x, y);
-
-      float lw = m_plot.GetAt(x, y)->weight;
-      float rw = m_plot.GetAt(x, y)->weight;
-      float uw = m_plot.GetAt(x, y)->weight;
-      float dw = m_plot.GetAt(x, y)->weight;
-      float cw = m_plot.GetAt(x, y)->weight;
-
-      float sum = std::numeric_limits<float>::epsilon();
-      sum += lw;
-      sum += rw;
-      sum += uw;
-      sum += dw;
-      sum += cw;
-      sum = 1.0f / sum;
-      lw *= sum;
-      rw *= sum;
-      uw *= sum;
-      dw *= sum;
-      cw *= sum;
-
-      m_image.PutPixel(x, y, *center*cw + *left*lw + *right*rw + *up*uw + *down*dw);
+      m_image.PutPixel(x, y, m_toneMap.GetTone(final));
     }
   }
 }
