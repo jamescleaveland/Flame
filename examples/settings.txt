@@ -1,0 +1,7 @@
+bin/Flame 1440 900 10 "dbl half serp2 | spherical swirl tangent" -.4 0 30
+
+bin/Flame 1440 900 10 "dbl half serp2 | polar heart tangent spherical polar heart tangent spherical" 0 -.5 30
+
+bin/Flame 1440 900 10 "dbl half serp2 | spherical ex julia hyperbolic swirl half" 0 0 30
+
+bin/Flame 1440 1440 10 "dbl half serp2 | ex fisheye disc dbl dbl fisheye spherical half" 0 0 30
